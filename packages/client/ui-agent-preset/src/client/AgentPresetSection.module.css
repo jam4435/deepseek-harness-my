@@ -1,0 +1,805 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 720px;
+  color: var(--dsw-alias-label-primary);
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.intro {
+  margin: 0;
+  font-size: 13px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+/* Cards, not rows: a preset is a thing you pick, and the description is the
+   part that tells them apart — a row would bury it beside the actions. */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Group-to-group breathing room: the section's 12px gap plus 20px reads the
+   two rosters as separate blocks (32px total). */
+.group + .group {
+  margin-top: 20px;
+}
+
+.groupHead {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  /* Every row the same height, so a short description does not make its card
+     shorter than the one beside it. */
+  grid-auto-rows: 1fr;
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  background: var(--dsw-alias-bg-layer-3);
+  transition: border-color .16s, background .16s;
+}
+
+
+.card:hover:not(.cardActive) {
+  border-color: var(--dsw-alias-label-dimmed);
+}
+
+/* The default preset reads as selected, not merely badged. */
+.cardActive {
+  background: var(--dsw-alias-bg-layer-2);
+  border-color: var(--dsw-alias-label-primary);
+}
+
+/* A broken preset reads as damaged before anything else: the card cannot be
+   picked, so its border carries the warning the disabled body cannot. */
+.cardBroken {
+  border-color: var(--dsw-alias-state-error-primary);
+}
+
+.cardBroken:hover {
+  border-color: var(--dsw-alias-state-error-primary);
+}
+
+.brokenBadge {
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 17px;
+  white-space: nowrap;
+  font-weight: 500;
+  background: var(--dsw-alias-state-error-primary);
+  color: var(--dsw-alias-bg-layer-3);
+}
+
+/* The discovery-reported reason, verbatim: it names the file and the fix. */
+.cardBrokenReason {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-state-error-primary);
+  overflow-wrap: anywhere;
+}
+
+/* The card body is the control that picks the preset. */
+.cardMain {
+  flex: 1;
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 12px;
+  border-radius: 12px 12px 0 0;
+}
+
+.cardMain:disabled {
+  cursor: default;
+}
+
+.cardMain:focus-visible {
+  outline: 2px solid var(--dsw-alias-brand-primary);
+  outline-offset: -2px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardName {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.badge,
+.inUse {
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 17px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.badge {
+  border: 1px solid var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.inUse {
+  margin-left: auto;
+  background: var(--dsw-alias-label-primary);
+  color: var(--dsw-alias-bg-layer-3);
+}
+
+/* Bounded to four lines. A preset publishes its own description, so one long
+   one would otherwise stretch every card in its grid row (`.cards` sizes rows
+   1fr). Clamping is CSS alone: the whole text stays in the DOM for assistive
+   tech, and the card offers it on hover when it is actually cut off. The
+   description does not grow to fill the card — `-webkit-line-clamp` on a
+   flex-stretched box leaves the clamp height and the box height disagreeing,
+   so `.cardId` takes the free space with an auto margin instead. */
+.cardDesc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--dsw-alias-label-secondary);
+  min-height: 42px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  /* A user-authored description may carry an unbreakable path or URL. */
+  overflow-wrap: anywhere;
+}
+
+.cardId {
+  margin-top: auto;
+  font-family: var(--dsw-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.cardFoot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--dsw-alias-border-l2);
+}
+
+/* Icon-only actions: the label rides `title` so the row stays quiet until
+   someone reaches for it. */
+.iconButton {
+  position: relative;
+  appearance: none;
+  border: 0;
+  border-radius: 7px;
+  padding: 6px;
+  background: none;
+  color: var(--dsw-alias-label-tertiary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.iconButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.iconButton:hover:not(:disabled) {
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+}
+
+.iconButton:focus-visible {
+  outline: 2px solid var(--dsw-alias-brand-primary);
+  outline-offset: -1px;
+}
+
+.iconButton::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--dsw-alias-label-primary);
+  color: var(--dsw-alias-bg-layer-3);
+  font-size: 11px;
+  line-height: 17px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s;
+}
+
+.iconButton:hover::after,
+.iconButton:focus-visible::after {
+  opacity: 1;
+}
+
+.iconDanger:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover-danger);
+  color: var(--dsw-alias-state-error-primary);
+}
+
+/* Where the host has no desktop opener, the row answers with the directory
+   itself — text to copy, not a control that would spawn into nothing. */
+.revealedPath {
+  margin: 0;
+  padding: 6px 16px 10px;
+  font-size: 11px;
+  color: var(--dsw-alias-label-tertiary);
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.revealedPath code {
+  font-family: var(--dsw-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  color: var(--dsw-alias-label-secondary);
+  user-select: all;
+  overflow-wrap: anywhere;
+}
+
+.revealedPathLabel {
+  white-space: nowrap;
+}
+
+.secondaryButton {
+  border: none;
+  border-radius: 7px;
+  padding: 5px 8px;
+  background: none;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+
+.secondaryButton:hover:not(:disabled) {
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.secondaryButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.input {
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--dsw-alias-brand-primary);
+}
+
+.input::placeholder {
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.dialog {
+  width: min(560px, 100%);
+}
+
+.dialogFields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editorDialog {
+  width: min(880px, 100%);
+}
+
+/* The studio takes over the settings body rather than nesting another dialog.
+   Its three calm columns keep identity, navigation, and the active editor in
+   view during longer preset work. */
+.studio {
+  min-height: min(760px, calc(100vh - 180px));
+  display: grid;
+  grid-template-columns: minmax(178px, 220px) minmax(126px, 154px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--dsw-alias-bg-layer-3);
+  color: var(--dsw-alias-label-primary);
+}
+
+.studioRoster {
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: auto;
+  padding: 10px;
+  border-right: 1px solid var(--dsw-alias-border-l2);
+  background: var(--dsw-alias-bg-layer-2);
+}
+
+.studioBrand,
+.studioRosterActions,
+.studioPanelHead,
+.studioFooter,
+.programCard header,
+.programActions,
+.programToggle {
+  display: flex;
+  align-items: center;
+}
+
+.studioBrand {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 2px 2px 10px;
+}
+
+.studioRosterActions {
+  justify-content: flex-end;
+  padding: 0 2px 8px;
+}
+
+.studioPreset,
+.studioNavItem,
+.studioNavActive {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.studioPreset {
+  display: grid;
+  gap: 3px;
+  padding: 9px 10px;
+}
+
+.studioPreset span {
+  font-size: 11px;
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.studioPreset:hover,
+.studioNavItem:hover {
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.studioPresetActive,
+.studioNavActive {
+  background: color-mix(in srgb, var(--dsw-alias-brand-primary) 13%, transparent);
+  color: var(--dsw-alias-label-primary);
+}
+
+.studioNav {
+  grid-row: 1;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-right: 1px solid var(--dsw-alias-border-l2);
+}
+
+.studioNavItem,
+.studioNavActive {
+  padding: 8px 10px;
+}
+
+.studioMain {
+  grid-row: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 22px;
+}
+
+.studioFooter {
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--dsw-alias-border-l2);
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+}
+
+.studioFooter > div {
+  display: flex;
+  gap: 8px;
+}
+
+.studioPanelHead {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.studioPanelHead p {
+  margin: 4px 0 0;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.programGroup {
+  display: grid;
+  gap: 8px;
+}
+
+.programLabel {
+  font-family: var(--dsw-font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.programCard {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 10px;
+  background: var(--dsw-alias-bg-layer-3);
+}
+
+.programCard header {
+  justify-content: space-between;
+}
+
+.programToggle {
+  gap: 6px;
+  font-size: 12px;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.programActions {
+  gap: 2px;
+}
+
+.programGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.studioSource {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 520px;
+  resize: vertical;
+  padding: 14px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 10px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  font: 12px/1.6 var(--dsw-font-mono, ui-monospace, monospace);
+}
+
+@media (max-width: 780px) {
+  .studio {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto minmax(420px, 1fr) auto;
+    border-radius: 10px;
+  }
+
+  .studioRoster,
+  .studioNav {
+    grid-column: 1;
+    grid-row: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--dsw-alias-border-l2);
+  }
+
+  .studioRoster {
+    max-height: 180px;
+  }
+
+  .studioNav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px;
+  }
+
+  .studioNavItem,
+  .studioNavActive {
+    white-space: nowrap;
+  }
+
+  .studioMain {
+    grid-column: 1;
+    grid-row: 3;
+    padding: 14px;
+  }
+
+  .studioFooter {
+    grid-column: 1;
+    grid-row: 4;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .programGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editorFields {
+  display: grid;
+  gap: 14px;
+}
+
+.editorPanel {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--dsw-alias-bg-layer-2);
+}
+
+.editorPanel .cards {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.editorPanel .card {
+  min-width: 0;
+}
+
+.fileTree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.fileTree li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 2px 4px;
+  border-radius: 6px;
+}
+
+.fileSelected {
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.fileButton {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border: 0;
+  background: none;
+  color: var(--dsw-alias-label-primary);
+  text-align: left;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.fileButton span {
+  overflow-wrap: anywhere;
+}
+
+.fileButton small {
+  color: var(--dsw-alias-label-dimmed);
+  white-space: nowrap;
+}
+
+.fileActions {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.filePreview {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.advancedSource {
+  display: grid;
+  gap: 8px;
+}
+
+.advancedSource summary {
+  cursor: pointer;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+}
+
+.editorIdentity {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--dsw-alias-brand-primary);
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+}
+
+.editorIdentity code {
+  font-family: var(--dsw-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  color: var(--dsw-alias-label-secondary);
+}
+
+.editorDescription,
+.editorCode {
+  box-sizing: border-box;
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 10px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+}
+
+.editorDescription {
+  min-height: 74px;
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.editorCode {
+  min-height: min(48vh, 440px);
+  padding: 14px;
+  font-family: var(--dsw-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 12.5px;
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+.editorDescription:focus,
+.editorCode:focus {
+  outline: none;
+  border-color: var(--dsw-alias-brand-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dsw-alias-brand-primary) 16%, transparent);
+}
+
+/* A shipped composition can be long; the dialog scrolls it rather than grow. */
+.viewerCode {
+  margin: 0;
+  padding: 12px;
+  max-height: min(52vh, 480px);
+  overflow: auto;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 10px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsw-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 12.5px;
+  line-height: 1.5;
+  white-space: pre;
+  tab-size: 2;
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--dsw-alias-state-error-primary);
+}
+
+.deleteDialog {
+  width: min(480px, 100%);
+}
+
+.deleteConfirm:not(:disabled) {
+  border-color: var(--dsw-alias-state-error-primary);
+  color: var(--dsw-alias-state-error-primary);
+}
+
+.deleteConfirm:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover-danger);
+}
+
+/* The conversational authoring entry, after the card grid in the spot the
+   create button vacated. Dashed like the Models page's add affordances: it
+   reads as a place a preset will appear, not a command. */
+.creatorButton {
+  box-sizing: border-box;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 44px;
+  border: 1px dashed var(--dsw-alias-border-l3);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 22px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+}
+
+.creatorButton:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.creatorButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.regexTest {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.regexResult {
+  margin: 0;
+  padding: 8px;
+  overflow: auto;
+  border-radius: 6px;
+  background: var(--dsh-color-background-secondary, rgba(0, 0, 0, 0.06));
+  white-space: pre-wrap;
+}

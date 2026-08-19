@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-15-web-ui-wallpaper-plugin.md
+2026-08-15-web-ui-wallpaper-plugin.md: f52fe3641382354ffd67f825428d77f92bed2360
+2026-08-15-web-ui-wallpaper-plugin.zh.md: 0fedd68f9500b73858a13c1f30d2913d26185334
